@@ -1,0 +1,45 @@
+{
+  "name": "is-academic-email",
+  "version": "1.0.3",
+  "description": "Fast academic email validation using the JetBrains swot database",
+  "repository": {
+    "url": "git+https://github.com/amplitudesxd/is-academic-email.git"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "data.json.br"
+  ],
+  "keywords": [
+    "academic-email",
+    "email-validation",
+    "domain",
+    "validator",
+    "swot",
+    "tld"
+  ],
+  "scripts": {
+    "bundle-data": "tsx scripts/bundle-data.ts",
+    "build": "pnpm run bundle-data && tsc"
+  },
+  "author": "amplitudesxd",
+  "license": "MIT",
+  "packageManager": "pnpm@10.15.1",
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "@types/node": "^24.3.1",
+    "tsx": "^4.20.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

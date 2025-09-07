@@ -1,0 +1,63 @@
+name: Weekly Data Update and Publish
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  update-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Clone swot repository
+        run: git clone --depth 1 https://github.com/jetbrains/swot
+
+      - name: Get swot commit info
+        id: swot-info
+        run: |
+          cd swot
+          echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "date=$(git log -1 --format=%ci)" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Configure git
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version and commit
+        run: |
+          npm version patch --no-git-tag-version
+          git add package.json
+          git commit -m "chore: update swot (${{ steps.swot-info.outputs.commit }})"
+          git push
+
+      - name: Build package
+        run: pnpm run build
+        env:
+          SWOT_COMMIT: ${{ steps.swot-info.outputs.commit }}
+          SWOT_DATE: ${{ steps.swot-info.outputs.date }}
+
+      - name: Publish to npm
+        run: npm publish
