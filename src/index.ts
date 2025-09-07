@@ -14,7 +14,7 @@ type SwotDataPacked = {
 /**
  * Unpacked dataset used at runtime.
  *
- * @property {Map<string, string[]>} institutions  Map from registered domain
+ * @property {Map<string, string[]>} institutions Map from registered domain
  * (e.g., "stanford.edu") to one or more official institution names.
  * @property {Set<string>} stoplist Domains/subdomains that should not be considered academic.
  * @property {Set<string>} tlds Academic/public-suffix TLDs (e.g., "edu", "ac.uk").
