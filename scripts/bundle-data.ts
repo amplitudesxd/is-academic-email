@@ -1,11 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { brotliCompress, constants as ZC } from 'node:zlib';
-import { promisify } from 'node:util';
 import { domainToASCII } from 'node:url';
 import { execSync } from 'node:child_process';
-
-const br = promisify(brotliCompress);
 
 async function* walk(dir: string): AsyncGenerator<string> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -157,17 +153,14 @@ async function main() {
 
   await fs.mkdir(outDir, { recursive: true });
 
-  const outPath = path.join(outDir, 'data.json.br');
-  const brBuf = await br(Buffer.from(JSON.stringify(swotData), 'utf8'), {
-    params: { [ZC.BROTLI_PARAM_QUALITY]: 11 },
-  });
-  await fs.writeFile(outPath, brBuf);
-  console.log(`Wrote compressed data to ${outPath}`);
+  const outPath = path.join(outDir, 'data.json');
+  await fs.writeFile(outPath, JSON.stringify(swotData), 'utf8');
+  console.log(`Wrote data to ${outPath}`);
 
   const metadataPath = path.join(outDir, 'src', 'swot-metadata.ts');
 
   const tsContent = `// This file was automatically generated on ${new Date().toISOString()}
-export const SWOT_METADATA = ${JSON.stringify(swotInfo, null, 2)} as const;
+export const SWOT_METADATA = ${JSON.stringify(swotInfo)} as const;
 `;
 
   await fs.writeFile(metadataPath, tsContent);

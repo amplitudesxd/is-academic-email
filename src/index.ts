@@ -1,9 +1,4 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { brotliDecompressSync } from 'node:zlib';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import dataRaw from '../data.json' assert { type: 'json' };
 
 type SwotDataPacked = {
   institutions: Record<string, string[]>;
@@ -25,27 +20,13 @@ export type SwotData = {
   tlds: Set<string>;
 };
 
-function loadData(): SwotData {
-  const dataPath = path.join(__dirname, '..', 'data.json.br');
+const packed = dataRaw as SwotDataPacked;
 
-  let packed: SwotDataPacked;
-  try {
-    const compressed = fs.readFileSync(dataPath);
-    const decompressed = brotliDecompressSync(compressed);
-    packed = JSON.parse(decompressed.toString('utf8')) as SwotDataPacked;
-  } catch (err: unknown) {
-    console.error(`Error loading SWOT data from ${dataPath}:`, err);
-    packed = { institutions: {}, stoplist: [], tlds: [] };
-  }
-
-  return {
-    institutions: new Map(Object.entries(packed.institutions)),
-    stoplist: new Set(packed.stoplist.map((s) => s.toLowerCase())),
-    tlds: new Set(packed.tlds.map((s) => s.toLowerCase())),
-  };
-}
-
-const DATA: SwotData = loadData();
+const DATA: SwotData = {
+  institutions: new Map(Object.entries(packed.institutions)),
+  stoplist: new Set(packed.stoplist.map((s) => s.toLowerCase())),
+  tlds: new Set(packed.tlds.map((s) => s.toLowerCase())),
+};
 
 function domainParts(emailOrDomain: string): string[] {
   const raw = emailOrDomain.trim().toLowerCase();
