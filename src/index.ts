@@ -1,4 +1,4 @@
-import dataRaw from '../data.json' assert { type: 'json' };
+import dataRaw from '../data.json' with { type: 'json' };
 
 type SwotDataPacked = {
   institutions: Record<string, string[]>;
