@@ -33,7 +33,8 @@ function loadData(): SwotData {
     const compressed = fs.readFileSync(dataPath);
     const decompressed = brotliDecompressSync(compressed);
     packed = JSON.parse(decompressed.toString('utf8')) as SwotDataPacked;
-  } catch {
+  } catch (err: unknown) {
+    console.error(`Error loading SWOT data from ${dataPath}:`, err);
     packed = { institutions: {}, stoplist: [], tlds: [] };
   }
 
