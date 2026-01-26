@@ -1,6 +1,6 @@
 {
   "name": "is-academic-email",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Fast academic email validation using the JetBrains swot database",
   "repository": {
     "url": "git+https://github.com/amplitudesxd/is-academic-email.git"
